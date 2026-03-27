@@ -178,59 +178,95 @@ If any requirement has "Limited" or "Not supported" status, stop and discuss:
 
 ---
 
-## Phase 3: Output Summary + Handoff
+## Phase 3: Output Spec + Handoff
 
-### Summary Format
+### Spec File
 
-After feasibility is confirmed, produce a structured summary. Use the branching notation for multi-path workflows.
+After feasibility is confirmed, produce a structured spec and **save as `workflows/{name}.spec.md`**。檔名用英文 kebab-case（例如 `daily-sales-report.spec.md`）。
 
-```
-## Requirements Summary: {Project Name}
+先在對話中展示完整內容讓使用者確認，確認後再寫入檔案。
 
-- **Goal**: [one sentence describing what this automation does]
+### Spec Format
+
+````markdown
+# {Project Name}
+
+## User Stories
+
+As a {角色},
+I want {自動化行為},
+so that {帶來的價值}.
+
+<!-- 多個 story 時逐一列出 -->
+<!-- 範例：
+As a 業務主管,
+I want 每天早上自動收到昨日銷售摘要,
+so that 不用手動查報表就能掌握業績.
+
+As a 客服人員,
+I want 客訴郵件自動分類並建立待辦,
+so that 不會漏掉任何客訴.
+-->
+
+## Overview
+
+- **Goal**: [一句話描述這個自動化做什麼]
 - **Trigger**: Schedule / Webhook / Manual / Event-based
 - **Data Source**: Google Sheets / Gmail / API / Form / ...
-- **Processing**:
-  [For linear workflows]
-  Read data -> Filter -> Send notification
-  [For branching workflows, use this notation]
-  Receive email -> AI classify
-    -> Case A (quote): Forward to sales team
-    -> Case B (complaint): Create Todoist task
-    -> Default: Archive
-- **AI Needed**: Yes/No (purpose: classification / summarization / ...)
 - **Output**: LINE / Email / Google Sheets / ...
 - **Frequency**: Daily 9:00 / Real-time / Every hour / ...
+- **AI Needed**: Yes/No (用途: classification / summarization / ...)
 
-### Credentials Needed
+## Processing Flow
+
+[線性工作流]
+Read data -> Filter -> Send notification
+
+[分支工作流用此格式]
+Receive email -> AI classify
+  -> Case A (quote): Forward to sales team
+  -> Case B (complaint): Create Todoist task
+  -> Default: Archive
+
+## Credentials Needed
+
 - [ ] Google Sheets (OAuth2)
 - [ ] LINE Messaging API (API Key)
 - [ ] Gemini API (API Key) — for AI features
 
-### Acceptance Criteria
+## Acceptance Criteria
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 - [ ] Criterion 3
 
-### Error Handling
+## Error Handling
+
 - If [situation 1] -> [how to handle]
 - If [situation 2] -> [how to handle]
-```
+````
 
-The "Credentials Needed" section is important — it tells the student exactly what API keys or OAuth connections they need to set up before the workflow can run.
+### Writing Guidelines
+
+- **User Stories** 是必填，至少一個。用使用者的語言寫，不要用技術術語。
+- **Credentials Needed** 告訴使用者需要事先準備哪些 API Key 或 OAuth 連線。
+- **Acceptance Criteria** 定義「做完了」的標準，後續測試會用到。
+- **Processing Flow** 用箭頭標記法，分支用縮排表示。
 
 ### Confirmation and Handoff
 
-Present the summary and ask:
-> Does this look right? If yes, I'll start building the workflow.
+Present the spec and ask:
+> 這份規格書看起來對嗎？確認的話我就開始建立工作流。
 
 When the user confirms:
-- If n8n-mcp tools are available: proceed to invoke the `generate` or `deploy` skill to build the workflow directly
-- If no MCP tools: output the summary for the user to take to their workflow builder
+1. Save to `workflows/{name}.spec.md`
+2. If n8n-mcp tools are available: proceed to invoke the `generate` or `deploy` skill to build the workflow directly
+3. If no MCP tools: output the spec for the user to take to their workflow builder
 
-The summary serves double duty:
-- **For the student**: a checkpoint to confirm understanding before building
-- **For the instructor**: a window into the student's requirements thinking
+The spec serves triple duty:
+- **For the user**: a checkpoint to confirm understanding before building
+- **For the generate skill**: structured input for workflow generation
+- **For the test skill**: acceptance criteria define what to verify
 
 ---
 
